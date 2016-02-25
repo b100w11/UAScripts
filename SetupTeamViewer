@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# enable multi-arch
+sudo dpkg --add-architecture i386
+sudo apt-get update
+
+# Downlaod the latest teamviewer
+wget http://download.teamviewer.com/download/teamviewer_i386.deb -O /tmp/teamviewer_i386.deb
+
+# install it
+sudo dpkg -i /tmp/teamviewer_i386.deb
+
+# install the dependencies
+sudo apt-get install -f
