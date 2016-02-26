@@ -1,7 +1,7 @@
 #!/bin/bash
 # Install telegram desktop client
 Remote="https://updates.tdesktop.com/tlinux/"
-Release="tsetup.0.9.13.tar.xz"
+Release="tsetup.0.9.26.tar.xz"
 RemoteIcon="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
 LocalDestination="/opt/Telegram"
 
