@@ -1,0 +1,75 @@
+#!/bin/bash
+# Install telegram desktop client
+Remote="https://updates.tdesktop.com/tlinux/"
+Release="tsetup.0.9.13.tar.xz"
+RemoteIcon="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
+LocalDestination="/opt/Telegram"
+
+
+function pause(){
+   read -p "$*"
+}
+
+# elevate privilege
+currentuid="`id -ur`"
+sudo=''
+if (( $currentuid != 0 )); then
+    sudo='sudo'
+fi
+
+echo "Install Telegram"
+echo ""
+pause 'Press a key to install, CTRL+C to exit'
+
+# Create temp directory
+TempDir="`mktemp -d`/"
+cd $TempDir
+
+# Download Telegram
+echo "Downloading $Remote$Release"
+wget -q $Remote$Release
+
+# Download icon from wikimedia to /usr/share/pixmaps
+echo "Downloading $RemoteIcon"
+wget -q $RemoteIcon
+
+# Extract
+echo "Extracting $Release"
+tar xJf $Release 
+
+# Move software to /opt and link in /usr/local/bin
+$sudo mkdir $LocalDestination
+$sudo mv Telegram/* $LocalDestination
+$sudo mv Telegram_logo.svg $LocalDestination/telegram.svg
+
+# Create links
+$sudo ln -s $LocalDestination/Telegram /usr/local/bin/Telegram
+$sudo ln -s $LocalDestination/Updater /usr/local/bin/Updater
+$sudo ln -s $LocalDestination/telegram.svg /usr/share/pixmaps/telegram.svg
+
+echo "Moved Software and Icon"
+
+# Create desktop entry in /usr/share/applications/telegram.desktop
+
+# Freedesktop style
+$sudo cat > telegram.desktop << EOF
+
+[Desktop Entry]
+	Name=Telegram
+	GenericName=Telegram
+	Comment=Instant Messaging client
+	Keywords=chat;messaging;im;
+	Icon=/usr/share/pixmaps/telegram.svg
+	Type=Application
+	Categories=Network;InstantMessaging;Chat;
+	Exec=/usr/local/bin/Telegram
+	Terminal=false
+
+EOF
+$sudo mv telegram.desktop /usr/share/applications/telegram.desktop
+
+echo "Created .desktop"
+
+# Cleanup
+cd
+$sudo rm -rf $TempDir
